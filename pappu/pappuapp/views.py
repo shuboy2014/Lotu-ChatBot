@@ -5,16 +5,37 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views import View
 import json
 import requests
+import apiai
 
 ACCESS_TOKEN = 'EAAGOpHydMTkBAHGkuUZAzzsPUEqj7jxzeRFRL6oeZAE0LoqZBtR0LAMZBC1Au0FiPCgVvR8dIvM01tlpg5g0ZBZCxLzEo0WmkOwUwNhrKgPE3ZCs0NlHmBEYT3VjEtK0ij47QkQNCXh10JN3tbfubgMY8V9TpIcaEeKP1ZAeWbmwaAZDZD'
 URL = 'https://graph.facebook.com/v2.6/me/messages?access_token=' + ACCESS_TOKEN
 VERIFY_TOKEN = '958209560'
+CLIENT_ACCESS_TOKEN = '57a3d57bb3e24e5aa4df1c353aedceea'
+
+
+def get_reply(msg):
+    ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
+    request = ai.text_request()
+    request.session_id = "session"
+    request.query = msg
+    response = request.getresponse()
+    response = json.loads(response.read().decode('utf-8'))
+    return response["result"]["fulfillment"]["speech"]
 
 
 def send_msg(fbid, msg):
-    x = requests.post(URL, json.dumps({"recipient": {"id": fbid}, "message": {"text": "hello world!"}}),
-                      headers={"Content-Type": "application/json"})
-    pp(x.json())
+    text = get_reply(msg)
+
+    if text is None:
+        text = "Sorry, I don’t Understand :("
+
+    response = requests.post(
+        URL,
+        json.dumps({"recipient": {"id": fbid}, "message": {"text": text}}),
+        headers={"Content-Type": "application/json"}
+    )
+
+    return
 
 
 class BotView(View):
