@@ -27,15 +27,15 @@ def send_msg(fbid, msg):
     text = get_reply(msg)
 
     if text is None:
-        text = "Sorry, I don’t Understand :("
+        text = "Sorry, I don’t Understand!"
 
     response = requests.post(
         URL,
-        json.dumps({"recipient": {"id": fbid}, "message": {"text": text}}),
+        json.dumps({"recipient": {"id": fbid}, "message": {"text": str(text)}}),
         headers={"Content-Type": "application/json"}
     )
 
-    return
+    return response.json()
 
 
 class BotView(View):
