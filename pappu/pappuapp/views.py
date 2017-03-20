@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pprint import pprint as pp
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse, HttpResponse
@@ -31,7 +32,7 @@ def send_msg(fbid, msg):
 
     response = requests.post(
         URL,
-        json.dumps({"recipient": {"id": fbid}, "message": {"text": str(text)}}),
+        json.dumps({"recipient": {"id": fbid}, "message": {"text": text}}),
         headers={"Content-Type": "application/json"}
     )
 
